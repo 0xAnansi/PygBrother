@@ -38,6 +38,10 @@ jobs:
       with:
         name: pytest-report
         path: pytest-report.xml
+    - name: Upload coverage reports to Codecov
+      uses: codecov/codecov-action@v5
+      with:
+        token: ${{ secrets.CODECOV_TOKEN }}
 
   build:
     runs-on: ubuntu-latest
