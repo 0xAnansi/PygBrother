@@ -77,7 +77,7 @@ def mock_comment(mock_redditor, mock_submission):
     comment.body = 'Test comment body'
     comment.created_utc = time.time()
     comment.score = 5
-    comment.parent_id = 't3_abc123'
+    comment.parent_id = 't3_abc1231'
     comment.subreddit = 'testsub'
     comment.author = mock_redditor
     comment.submission = mock_submission
