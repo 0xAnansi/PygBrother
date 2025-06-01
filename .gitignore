@@ -175,3 +175,4 @@ cython_debug/
 typings/
 Pygbrother/typings/
 db_data/
+.vscode
