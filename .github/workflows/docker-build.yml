@@ -32,12 +32,17 @@ jobs:
         pip install -r requirements.txt
     - name: Run tests with pytest and JUnit XML output
       run: |
-        env PYTHONPATH=$PWD pytest --junitxml=pytest-report.xml tests/
+        env PYTHONPATH=$PWD pytest --junitxml=pytest-report.xml --cov --cov-branch --cov-report=xml tests/
     - name: Upload pytest results
       uses: actions/upload-artifact@v4
       with:
         name: pytest-report
         path: pytest-report.xml
+    - name: Upload coverage reports to Codecov
+      uses: codecov/codecov-action@v5
+      with:
+        token: ${{ secrets.CODECOV_TOKEN }}
+        slug: 0xAnansi/PygBrother
 
   build:
     runs-on: ubuntu-latest
