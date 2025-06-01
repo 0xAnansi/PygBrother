@@ -1,0 +1,6 @@
+# Requirements for Reddit fetcher app
+praw
+sqlalchemy
+psycopg2-binary
+pytest
+testcontainers[postgresql]
