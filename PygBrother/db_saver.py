@@ -17,6 +17,10 @@ class DatabaseSaver:
         session: SQLAlchemySession = self.session_factory()
         trans_session: SQLAlchemySession = self.session_factory()
         try:
+            ex_post = trans_session.query(PostModel).filter_by(reddit_id=post.id).first()
+            if ex_post:
+                logger.debug(f"Post {ex_post.reddit_id} already exists in the database.")
+                return
             # Save user if not present
             if post.author:
                 user = trans_session.query(UserModel).filter_by(reddit_id=post.author.name).first()
@@ -35,6 +39,10 @@ class DatabaseSaver:
         session: SQLAlchemySession = self.session_factory()
         trans_session: SQLAlchemySession = self.session_factory()
         try:
+            ex_comment = trans_session.query(CommentModel).filter_by(reddit_id=comment.id).first()
+            if ex_comment:
+                logger.debug(f"Comment {ex_comment.reddit_id} already exists in the database.")
+                return
             # Save user if not present (lookup by reddit_id)
             if comment.author:
                 user = trans_session.query(UserModel).filter_by(reddit_id=comment.author.name).first()
@@ -57,23 +65,20 @@ class DatabaseSaver:
             trans_session.close()
             session.close()
 
-    # def save_user(self, user: praw.models.Redditor) -> None:
-    #     session: SQLAlchemySession = self.session_factory()
-    #     try:
-    #         session.merge(UserModel.from_praw(user))
-    #         session.commit()
-    #     except SQLAlchemyError as e:
-    #         session.rollback()
-    #         print(f"Error saving user: {e}")
-    #     finally:
-    #         session.close()
-
+    # dic = {
+    #       "modaction": modaction,
+    #       "target": redditor_target
+    # }
     def save_modaction(self, dic) -> None:
         session: SQLAlchemySession = self.session_factory()
         trans_session: SQLAlchemySession = self.session_factory()
         modaction: ModAction = dic['modaction']
         target: Redditor = dic['target']
         try:
+            ex_modaction = trans_session.query(ModActionModel).filter_by(reddit_id=modaction.id).first()
+            if ex_modaction:
+                logger.debug(f"ModAction {ex_modaction.reddit_id} already exists in the database.")
+                return
             if modaction.target_author:
                 user = trans_session.query(UserModel).filter_by(reddit_id=target.name).first()
                 if not user: #and target.name != "[deleted]":

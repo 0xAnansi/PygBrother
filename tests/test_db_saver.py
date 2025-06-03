@@ -94,7 +94,20 @@ def test_save_post(db_saver, db_session, mock_submission):
     #time.sleep(99999)
 
 
-def test_save_comment(db_saver, db_session, mock_comment):
+from sqlalchemy.orm import Session
+
+def test_save_comment(db_saver: DatabaseSaver, db_session: Session, mock_comment: MagicMock):
+    db_saver.save_comment(mock_comment)
+    comment = db_session.query(CommentModel).filter_by(reddit_id=mock_comment.id).first()
+    assert comment is not None
+    assert comment.body == mock_comment.body
+    user = db_session.query(UserModel).filter_by(reddit_id=mock_comment.author.name).first()
+    assert user is not None
+    post = db_session.query(PostModel).filter_by(reddit_id=mock_comment.submission.id).first()
+    assert post is not None
+
+def test_multi_save_comment(db_saver: DatabaseSaver, db_session: Session, mock_comment: MagicMock):
+    db_saver.save_comment(mock_comment)
     db_saver.save_comment(mock_comment)
     comment = db_session.query(CommentModel).filter_by(reddit_id=mock_comment.id).first()
     assert comment is not None

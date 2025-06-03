@@ -35,6 +35,7 @@ def main() -> None:
         'refresh_token': os.environ.get('REDDIT_REFRESH_TOKEN', "empty"),
         'user_agent': os.environ.get('REDDIT_USER_AGENT', 'PygBrotherBot/0.1'),
     }
+    subreddit: str = os.environ.get('SUBREDDIT', 'python')
     #praw_config: dict[str, str] = {k: v for k, v in praw_config_raw.items() if v and v != "none"}
     db_url: str = os.environ.get('DATABASE_URL', 'postgresql+psycopg2://pygbrother:Soleil123@localhost:15432/pygbrother-dev')
     # logger.info(f"Using database URL: {db_url}")
@@ -44,7 +45,6 @@ def main() -> None:
     Base.metadata.create_all(engine)
 
     Session = sessionmaker(bind=engine)
-    subreddit: str = os.environ.get('SUBREDDIT', 'python')
     fetcher: RedditFetcher = RedditFetcher(subreddit, praw_config)
     db_saver = DatabaseSaver(Session)
     fetcher.post_publisher.subscribe(db_saver.save_post)

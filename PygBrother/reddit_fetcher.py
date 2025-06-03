@@ -118,3 +118,103 @@ class RedditFetcher:
         }
         self.modaction_publisher.notify(dic)
 
+    def fetch_post_by_id(self, post_id: str) -> Optional[Submission]:
+        """
+        Fetch a post by its ID.
+        
+        Args:
+            post_id (str): The ID of the post to fetch.
+        
+        Returns:
+            Optional[Submission]: The fetched post or None if not found.
+        """
+        try:
+            return self.reddit.submission(id=post_id)
+        except prawcore.exceptions.NotFound:
+            logger.warning(f"Post with ID {post_id} not found.")
+            return None
+    
+    def fetch_comment_by_id(self, comment_id: str) -> Optional[Comment]:
+        """
+        Fetch a comment by its ID.
+        
+        Args:
+            comment_id (str): The ID of the comment to fetch.
+        
+        Returns:
+            Optional[Comment]: The fetched comment or None if not found.
+        """
+        try:
+            return self.reddit.comment(id=comment_id)
+        except prawcore.exceptions.NotFound:
+            logger.warning(f"Comment with ID {comment_id} not found.")
+            return None
+        
+    def fetch_user_by_name(self, username: str) -> Optional[Redditor]:
+        """
+        Fetch a user by their username.
+        
+        Args:
+            username (str): The username of the user to fetch.
+        
+        Returns:
+            Optional[Redditor]: The fetched user or None if not found.
+        """
+        try:
+            return self.reddit.redditor(username)
+        except prawcore.exceptions.NotFound:
+            logger.warning(f"User {username} not found.")
+            return None
+
+    def fetch_modactions_by_id(self, modaction_id: str) -> Optional[ModAction]:
+        """
+        Fetch a mod action by its ID.
+
+        Args:
+            modaction_id (str): The ID of the mod action to fetch.
+
+        Returns:
+            Optional[ModAction]: The fetched mod action or None if not found.
+        """
+        try:
+            return self.reddit.modaction(id=modaction_id)
+        except prawcore.exceptions.NotFound:
+            logger.warning(f"Mod action with ID {modaction_id} not found.")
+            return None
+        
+    def fetch_latest_posts(self, limit: int = 10) -> list[Submission]:
+        """
+        Fetch the latest posts from the subreddit.
+        
+        Args:
+            limit (int): The maximum number of posts to fetch.
+        
+        Returns:
+            list[Submission]: A list of the latest posts.
+        """
+        return list(self.subreddit.new(limit=limit))
+    
+    def fetch_latest_comments(self, limit: int = 10) -> list[Comment]:
+        """
+        Fetch the latest comments from the subreddit.
+        
+        Args:
+            limit (int): The maximum number of comments to fetch.
+        
+        Returns:
+            list[Comment]: A list of the latest comments.
+        """
+        return list(self.subreddit.comments(limit=limit))
+    
+    def fetch_latest_modactions(self, limit: int = 10) -> list[ModAction]:
+        """
+        Fetch the latest mod actions from the subreddit.
+        
+        Args:
+            limit (int): The maximum number of mod actions to fetch.
+        
+        Returns:
+            list[ModAction]: A list of the latest mod actions.
+        """
+        return list(self.subreddit.mod.log(limit=limit))
+
