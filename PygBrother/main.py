@@ -36,6 +36,7 @@ def main() -> None:
         'user_agent': os.environ.get('REDDIT_USER_AGENT', 'PygBrotherBot/0.1'),
     }
     subreddit: str = os.environ.get('SUBREDDIT', 'python')
+    logger.info(f"Using subreddit: {subreddit} with UA: {praw_config['user_agent']}")
     #praw_config: dict[str, str] = {k: v for k, v in praw_config_raw.items() if v and v != "none"}
     db_url: str = os.environ.get('DATABASE_URL', 'postgresql+psycopg2://pygbrother:Soleil123@localhost:15432/pygbrother-dev')
     # logger.info(f"Using database URL: {db_url}")

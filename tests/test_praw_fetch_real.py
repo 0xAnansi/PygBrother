@@ -1,9 +1,12 @@
 import praw
+from PygBrother.log import get_logger
 from PygBrother.reddit_fetcher import RedditFetcher
 from PygBrother.models import PostModel, CommentModel
 
 import os
 import pytest
+
+logger = get_logger()
 
 @pytest.fixture(scope="module")
 def fetcher():
@@ -14,6 +17,7 @@ def fetcher():
         'user_agent': os.environ.get('REDDIT_USER_AGENT', 'PygBrotherBot/0.1'),
     }
     subreddit: str = os.environ.get('SUBREDDIT', 'python')
+    logger.info(f"Using subreddit: {subreddit} with UA: {praw_config['user_agent']}")
     return RedditFetcher(subreddit, praw_config)
 
 def test_fetch_real_submission(fetcher):
