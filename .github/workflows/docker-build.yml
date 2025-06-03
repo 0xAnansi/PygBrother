@@ -27,34 +27,47 @@ jobs:
     #     options: >-
     #       --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
     steps:
-    - uses: actions/checkout@v4
-    - name: Set up Python
-      uses: actions/setup-python@v5
-      with:
-        python-version: '3.13'
-    - name: Install dependencies
-      run: |
-        python -m pip install --upgrade pip
-        pip install -r requirements.txt
-    - name: Run tests with pytest and JUnit XML output
-      run: |
-        env PYTHONPATH=$PWD pytest --junitxml=pytest-report.xml --cov --cov-branch --cov-report=xml tests/
-    - name: Upload pytest results
-      uses: actions/upload-artifact@v4
-      with:
-        name: pytest-report
-        path: pytest-report.xml
-    - name: Upload coverage reports to Codecov
-      uses: codecov/codecov-action@v5
-      with:
-        token: ${{ secrets.CODECOV_TOKEN }}
-        slug: 0xAnansi/PygBrother
-    - name: SonarQube Scan
-      uses: SonarSource/sonarqube-scan-action@v5
-      env:
-        SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-    - name: PyCharm Python Security Scanner
-      uses: tonybaloney/pycharm-security@1.25.1
+      - name: Create env file
+        run: |
+          echo "REDDIT_CLIENT_ID=${{ secrets.REDDIT_CLIENT_ID }}" >> "$GITHUB_ENV"
+          echo "REDDIT_CLIENT_SECRET=${{ secrets.REDDIT_CLIENT_SECRET }}" >> "$GITHUB_ENV"
+          echo "REDDIT_REFRESH_TOKEN=${{ secrets.REDDIT_REFRESH_TOKEN }}" >> "$GITHUB_ENV"
+          echo "REDDIT_USER_AGENT=${{ secrets.REDDIT_USER_AGENT }}" >> "$GITHUB_ENV"
+          echo "SUBREDDIT=${{ secrets.SUBREDDIT }}" >> "$GITHUB_ENV"
+      - name: Check env
+        run: |
+          echo "The following env vars are set:"
+          echo "REDDIT_USER_AGENT=${{ secrets.REDDIT_USER_AGENT }}"
+          echo "SUBREDDIT=${{ secrets.SUBREDDIT }}"
+      - uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+          cache: 'pip'
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+      - name: Run tests with pytest and JUnit XML output
+        run: |
+          env PYTHONPATH=$PWD pytest --junitxml=pytest-report.xml --cov --cov-branch --cov-report=xml tests/
+      - name: Upload pytest results
+        uses: actions/upload-artifact@v4
+        with:
+          name: pytest-report
+          path: pytest-report.xml
+      - name: Upload coverage reports to Codecov
+        uses: codecov/codecov-action@v5
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          slug: 0xAnansi/PygBrother
+      - name: SonarQube Scan
+        uses: SonarSource/sonarqube-scan-action@v5
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+      - name: PyCharm Python Security Scanner
+        uses: tonybaloney/pycharm-security@1.25.1
 
   build:
     runs-on: ubuntu-latest
