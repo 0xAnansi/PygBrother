@@ -43,6 +43,12 @@ jobs:
       with:
         token: ${{ secrets.CODECOV_TOKEN }}
         slug: 0xAnansi/PygBrother
+    - name: SonarQube Scan
+      uses: SonarSource/sonarqube-scan-action@v5
+      env:
+        SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+    - name: PyCharm Python Security Scanner
+      uses: tonybaloney/pycharm-security@1.25.1
 
   build:
     runs-on: ubuntu-latest

@@ -176,3 +176,5 @@ typings/
 Pygbrother/typings/
 db_data/
 .vscode
+.dccache
+snyk-code.sarif
