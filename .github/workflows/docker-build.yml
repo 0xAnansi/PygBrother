@@ -67,7 +67,7 @@ jobs:
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
       - name: PyCharm Python Security Scanner
-        uses: tonybaloney/pycharm-security@1.25.1
+        uses: tonybaloney/pycharm-security@1.29.0
 
   build:
     runs-on: ubuntu-latest
