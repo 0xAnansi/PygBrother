@@ -1,5 +1,5 @@
 # syntax=docker/dockerfile:1
-FROM python:3.13.3-alpine3.22
+FROM python:3.13.4-alpine3.22
 
 # Set environment variables
 ENV PYTHONDONTWRITEBYTECODE=1
