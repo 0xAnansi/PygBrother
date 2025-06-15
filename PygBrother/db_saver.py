@@ -53,10 +53,12 @@ class DatabaseSaver:
             # Save post if not present (lookup by reddit_id)
             if comment.submission:
                 post = trans_session.query(PostModel).filter_by(reddit_id=comment.submission.id).first()
+                poster = comment.submission.author
                 if not post:
-                    user = trans_session.query(UserModel).filter_by(reddit_id=comment.submission.author.name).first()
-                    if not user and (comment.submission.author.name != comment.author.name):
-                        session.add(UserModel.from_praw(comment.submission.author))
+                    if poster is not None:
+                        user = trans_session.query(UserModel).filter_by(reddit_id=poster.name).first()
+                        if not user and (poster.name != comment.author.name):
+                            session.add(UserModel.from_praw(poster))
                     session.add(PostModel.from_praw(comment.submission))
             session.add(CommentModel.from_praw(comment))
             session.commit()

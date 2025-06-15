@@ -178,3 +178,5 @@ db_data/
 .vscode
 .dccache
 snyk-code.sarif
+PygBrother.code-workspace
+modlog.json

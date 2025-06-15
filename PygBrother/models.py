@@ -7,6 +7,10 @@ from praw.models.mod_action import ModAction
 from praw.models.reddit.comment import Comment
 from praw.models.reddit.redditor import Redditor
 from praw.models.reddit.submission import Submission
+import prawcore
+from .log import get_logger
+
+logger = get_logger()
 
 Base = declarative_base()
 
@@ -30,20 +34,36 @@ class UserModel(Base):
     def from_praw(cls: Type[T], praw_user: Redditor) -> Optional[T]:
         if praw_user.name == '[deleted]':
             return cls(
-            reddit_id=praw_user.name,
-            name=praw_user.name,
-            link_karma=0,
-            comment_karma=0,
-            is_mod=0,
-            icon_img=None
-        )      
+                reddit_id=praw_user.name,
+                name=praw_user.name,
+                link_karma=0,
+                comment_karma=0,
+                is_mod=0,
+                icon_img=None
+        )
+        # Do some dodgy error checking since praw dan return 404 some times
+        _reddit_id=praw_user.name
+        _name=praw_user.name
+        try:
+            _link_karma=getattr(praw_user, 'link_karma', 0)
+        except prawcore.exceptions.NotFound:
+            logger.warning(f"User {praw_user.name} not found, setting link_karma to -1")
+            _link_karma=-1
+        try:
+            _comment_karma=getattr(praw_user, 'comment_karma', 0)
+        except prawcore.exceptions.NotFound:
+            logger.warning(f"User {praw_user.name} not found, setting comment_karma to -1")
+            _comment_karma=-1
+        _is_mod=int(getattr(praw_user, 'is_mod', False))
+        _icon_img=getattr(praw_user, 'icon_img', None)
+
         return cls(
-            reddit_id=praw_user.name,
-            name=praw_user.name,
-            link_karma=getattr(praw_user, 'link_karma', 0),
-            comment_karma=getattr(praw_user, 'comment_karma', 0),
-            is_mod=int(getattr(praw_user, 'is_mod', False)),
-            icon_img=getattr(praw_user, 'icon_img', None)
+            reddit_id=_reddit_id,
+            name=_name,
+            link_karma=_link_karma,
+            comment_karma=_comment_karma,
+            is_mod=_is_mod,
+            icon_img=_icon_img
         )
 
 P = TypeVar('P', bound='PostModel')

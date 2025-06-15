@@ -38,7 +38,6 @@ class RedditFetcher:
         
         try:
             _ = self.reddit.user.me()
-            _ = self.reddit.user.me()
         except prawcore.exceptions.OAuthException as e:
            logger.error(f"Failed to authenticate Reddit user: {str(e)}")
            raise e
@@ -56,7 +55,7 @@ class RedditFetcher:
         self.stop_event: Event = Event()
         self.post_publisher: Publisher[Submission] = Publisher()
         self.comment_publisher: Publisher[Comment] = Publisher()
-        self.modaction_publisher: Publisher[ModAction] = Publisher()
+        self.modaction_publisher: Publisher[dict[str, ModAction | Redditor]] = Publisher()
         self.subscribers: list[Callable[[T], None]] = []
 
 

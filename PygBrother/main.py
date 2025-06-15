@@ -8,15 +8,14 @@
 # set -x DATABASE_URL sqlite:///pygbrother.db
 # python -m PygBrother.main
 
-from time import sleep
 from .reddit_fetcher import RedditFetcher
-from typing import Optional
 from .models import PostModel, CommentModel
 from .db_saver import DatabaseSaver
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from .log import get_logger
-from .models import Base  # <-- Add this import
+from .models import Base 
+from dotenv import load_dotenv
 
 import os
 
@@ -29,6 +28,7 @@ def print_comment(comment: CommentModel) -> None:
     print(f"New comment: {comment.body[:40]}... by {comment.author.name if comment.author else 'Unknown'}")
 
 def main() -> None:
+    load_dotenv()
     praw_config: dict[str, str] = {
         'client_id': os.environ.get('REDDIT_CLIENT_ID', "empty"),
         'client_secret': os.environ.get('REDDIT_CLIENT_SECRET', "empty"),
