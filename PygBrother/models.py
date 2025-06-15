@@ -1,11 +1,12 @@
 from __future__ import annotations
-import praw
-from praw.models.mod_action import ModAction
-from praw.reddit import Comment, Redditor, Submission
 from sqlalchemy import Column, Integer, String, Text, DateTime, ForeignKey
 from sqlalchemy.orm import declarative_base, relationship
 from datetime import datetime, timezone
-from typing import Optional, Type, Any, TypeVar, ClassVar
+from typing import Optional, Type, TypeVar, ClassVar
+from praw.models.mod_action import ModAction
+from praw.models.reddit.comment import Comment
+from praw.models.reddit.redditor import Redditor
+from praw.models.reddit.submission import Submission
 
 Base = declarative_base()
 
@@ -102,7 +103,7 @@ class CommentModel(Base):
             parent_id = praw_comment.parent_id,
             subreddit = str(praw_comment.subreddit),
             author_id = praw_comment.author.name if praw_comment.author else None,
-            post_id = praw_comment.submission.id if praw_comment.submission else None,
+            post_id = getattr(getattr(praw_comment, "submission", None), "id", None),
         )
 
 M = TypeVar('M', bound='ModActionModel')

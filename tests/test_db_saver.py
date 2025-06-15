@@ -2,7 +2,7 @@ import os
 import pytest
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
-from PygBrother.models import Base, UserModel, PostModel, CommentModel, ModActionModel
+from PygBrother.models import Base, UserModel, PostModel, CommentModel
 from PygBrother.db_saver import DatabaseSaver
 from unittest.mock import MagicMock
 import time
@@ -35,15 +35,19 @@ def pg_engine():
         Base.metadata.drop_all(engine)
         engine.dispose()
 
+from sqlalchemy.engine import Engine
+
 @pytest.fixture
-def db_session(pg_engine):
+def db_session(pg_engine: Engine):
     Session = sessionmaker(bind=pg_engine)
     session = Session()
     yield session
     session.close()
 
+from sqlalchemy.orm import Session
+
 @pytest.fixture
-def db_saver(db_session):
+def db_saver(db_session: Session):
     return DatabaseSaver(lambda: db_session)
 
 @pytest.fixture
@@ -57,7 +61,7 @@ def mock_redditor():
     return user
 
 @pytest.fixture
-def mock_submission(mock_redditor):
+def mock_submission(mock_redditor: MagicMock):
     post = MagicMock()
     post.id = 'abc123'
     post.title = 'Test Post'
@@ -71,7 +75,7 @@ def mock_submission(mock_redditor):
     return post
 
 @pytest.fixture
-def mock_comment(mock_redditor, mock_submission):
+def mock_comment(mock_redditor: MagicMock, mock_submission: MagicMock):
     comment = MagicMock()
     comment.id = 'cmt123'
     comment.body = 'Test comment body'
@@ -84,7 +88,7 @@ def mock_comment(mock_redditor, mock_submission):
     return comment
 
 
-def test_save_post(db_saver, db_session, mock_submission):
+def test_save_post(db_saver: DatabaseSaver, db_session: Session, mock_submission: MagicMock):
     db_saver.save_post(mock_submission)
     post = db_session.query(PostModel).filter_by(reddit_id=mock_submission.id).first()
     assert post is not None

@@ -1,6 +1,8 @@
 from typing import Callable
 from praw.models.mod_action import ModAction
-from praw.reddit import Comment, Redditor, Submission
+from praw.models.reddit.comment import Comment
+from praw.models.reddit.redditor import Redditor
+from praw.models.reddit.submission import Submission
 from sqlalchemy.orm import Session as SQLAlchemySession
 from .models import PostModel, CommentModel, UserModel, ModActionModel
 from sqlalchemy.exc import SQLAlchemyError
@@ -69,11 +71,11 @@ class DatabaseSaver:
     #       "modaction": modaction,
     #       "target": redditor_target
     # }
-    def save_modaction(self, dic) -> None:
+    def save_modaction(self, dic: dict[str, ModAction|Redditor]) -> None:
         session: SQLAlchemySession = self.session_factory()
         trans_session: SQLAlchemySession = self.session_factory()
-        modaction: ModAction = dic['modaction']
-        target: Redditor = dic['target']
+        modaction = dic['modaction']
+        target = dic['target']
         try:
             ex_modaction = trans_session.query(ModActionModel).filter_by(reddit_id=modaction.id).first()
             if ex_modaction:
