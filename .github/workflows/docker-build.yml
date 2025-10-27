@@ -53,7 +53,7 @@ jobs:
         run: |
           env PYTHONPATH=$PWD pytest --junitxml=pytest-report.xml --cov --cov-branch --cov-report=xml tests/
       - name: Upload pytest results
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: pytest-report
           path: pytest-report.xml
@@ -80,7 +80,7 @@ jobs:
       run: |
         docker build -t pygbrother:latest .
     - name: Save Docker image as artifact (optional)
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v5
       with:
         name: pygbrother-docker-image
         path: /tmp/pygbrother.tar
